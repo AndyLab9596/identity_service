@@ -1,23 +1,29 @@
 package com.devteria.identityservice.service;
 
 import com.devteria.identityservice.dto.request.AuthenticationRequest;
+import com.devteria.identityservice.dto.request.IntrospectRequest;
 import com.devteria.identityservice.dto.response.AuthenticationResponse;
+import com.devteria.identityservice.dto.response.IntrospectResponse;
 import com.devteria.identityservice.entity.User;
 import com.devteria.identityservice.exception.AppException;
 import com.devteria.identityservice.exception.ErrorCode;
 import com.devteria.identityservice.repository.UserRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -30,7 +36,8 @@ public class AuthenticationService {
     UserRepository userRepository;
 
     @NonFinal
-    protected static final String SIGNER_KEY = "1kGEGfShx74J0l0dwaYwEbcgqN9QWBSTi4HWuJUf6Kyn4oSSgF9CFYXx7A0hCii/";
+    @Value("${jwt.signer-key}")
+    protected String SIGNER_KEY;
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
@@ -44,6 +51,20 @@ public class AuthenticationService {
 
         String token = generateToken(request.getUsername());
         return AuthenticationResponse.builder().authenticated(true).token(token).build();
+    }
+
+    public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
+        JWSVerifier jwsVerifier = new MACVerifier(SIGNER_KEY.getBytes());
+
+        String token = request.getToken();
+        SignedJWT signedJWT = SignedJWT.parse(token);
+
+        boolean verified = signedJWT.verify(jwsVerifier);
+        Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+        boolean isTokenValid = verified && expiryTime.after(new Date());
+
+        return IntrospectResponse.builder().valid(isTokenValid).build();
     }
 
     private String generateToken(String username) {
