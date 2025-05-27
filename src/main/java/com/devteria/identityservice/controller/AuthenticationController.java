@@ -23,11 +23,7 @@ public class AuthenticationController {
     ApiResponse<AuthenticationResponse> login(
             @RequestBody AuthenticationRequest request
             ) {
-        boolean isAuthenticated = authenticationService.authenticate(request);
-
-        return ApiResponse.<AuthenticationResponse>builder()
-                .result(
-                AuthenticationResponse.builder().isAuthenticated(isAuthenticated).build()
-                ).build();
+        AuthenticationResponse authenticationResponse = authenticationService.authenticate(request);
+        return ApiResponse.<AuthenticationResponse>builder().result(authenticationResponse).build();
     }
 }
