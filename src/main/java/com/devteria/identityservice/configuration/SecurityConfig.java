@@ -1,10 +1,10 @@
 package com.devteria.identityservice.configuration;
 
-import com.devteria.identityservice.enums.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -21,6 +21,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final String[] PUBLIC_ENDPOINT = {"/users", "/auth/token", "/auth/introspect"};
@@ -35,7 +36,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         request ->
                                 request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT).permitAll()
-                                        .requestMatchers(HttpMethod.GET, "/users").hasRole(Role.ADMIN.name())
+                                        // Authorize by END POINT
+                                        //.requestMatchers(HttpMethod.GET, "/users").hasRole(Role.ADMIN.name())
                                 .anyRequest().authenticated()
                 );
 
