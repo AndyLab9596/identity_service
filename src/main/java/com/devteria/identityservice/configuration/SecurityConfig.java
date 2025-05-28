@@ -50,7 +50,9 @@ public class SecurityConfig {
                             .decoder(jwtDecoder())
                             // jwtAuthenticationConverter is to convert the SCOPE_ADMIN (this is OAuth2 by default) to ROLE_ADMIN
                             .jwtAuthenticationConverter(jwtAuthenticationConverter())
-            );
+
+            )       // Dealing with 401 error code.
+                    .authenticationEntryPoint(new JwtAuthenticationEntryPoint());
         });
 
         return httpSecurity.build();
