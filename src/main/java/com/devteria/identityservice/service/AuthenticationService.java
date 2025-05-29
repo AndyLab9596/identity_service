@@ -99,9 +99,12 @@ public class AuthenticationService {
     private String buildScope(User user) {
         // Convention of role in OAuth2 is like "USER ADMIN"
         StringJoiner stringJoiner = new StringJoiner(" ");
-        if (!CollectionUtils.isEmpty(user.getRoles())) {
-            user.getRoles().forEach(stringJoiner::add);
-        }
+        user.getRoles().forEach(role -> {
+            // Adding prefix ROLE_ to differentiate permission and role.
+            stringJoiner.add("ROLE_" + role.getName());
+            if (!CollectionUtils.isEmpty(role.getPermissions()))
+                role.getPermissions().forEach(permission -> stringJoiner.add(permission.getName()));
+        });
         return stringJoiner.toString();
     }
 }
