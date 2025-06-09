@@ -42,10 +42,8 @@ public class UserService {
         // 10 is the default salt, no higher the salt the more complexity it gets
         // -> need longer time to encode.
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        var role = roleRepository.findById(Role.USER.name()).orElseThrow(() -> new AppException(ErrorCode.INVALID_KEY));
         var roles = new HashSet<com.devteria.identityservice.entity.Role>();
-        roles.add(role);
+        roleRepository.findById(Role.USER.name()).ifPresent(roles::add);
         user.setRoles(roles);
 
         return userMapper.toUserResponse(userRepository.save(user));
