@@ -1,12 +1,13 @@
 package com.devteria.identityservice.service;
 
-import com.devteria.identityservice.dto.request.UserCreationRequest;
-import com.devteria.identityservice.dto.response.UserResponse;
-import com.devteria.identityservice.entity.User;
-import com.devteria.identityservice.entity.Role;
-import com.devteria.identityservice.exception.AppException;
-import com.devteria.identityservice.repository.RoleRepository;
-import com.devteria.identityservice.repository.UserRepository;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.util.Optional;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,13 +17,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 
-import java.time.LocalDate;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import com.devteria.identityservice.dto.request.UserCreationRequest;
+import com.devteria.identityservice.dto.response.UserResponse;
+import com.devteria.identityservice.entity.Role;
+import com.devteria.identityservice.entity.User;
+import com.devteria.identityservice.exception.AppException;
+import com.devteria.identityservice.repository.RoleRepository;
+import com.devteria.identityservice.repository.UserRepository;
 
 @SpringBootTest
 @TestPropertySource("/test.properties")
@@ -70,10 +71,7 @@ public class UserServiceTest {
                 .dob(dob)
                 .build();
 
-        role = Role.builder()
-                .name("User")
-                .description("User role")
-                .build();
+        role = Role.builder().name("User").description("User role").build();
     }
 
     @Test
@@ -81,7 +79,8 @@ public class UserServiceTest {
         // GIVEN
         when(userRepository.existsByUsername(anyString())).thenReturn(false);
         when(userRepository.save(any())).thenReturn(user);
-        when(roleRepository.findById(com.devteria.identityservice.enums.Role.USER.name())).thenReturn(Optional.ofNullable(role));
+        when(roleRepository.findById(com.devteria.identityservice.enums.Role.USER.name()))
+                .thenReturn(Optional.ofNullable(role));
 
         // WHEN
         var response = userService.createUser(request);

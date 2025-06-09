@@ -20,8 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final String[] PUBLIC_ENDPOINT = {
-            "/users",
-            "/auth/token", "/auth/introspect", "/auth/logout", "auth/refresh"
+        "/users", "/auth/token", "/auth/introspect", "/auth/logout", "auth/refresh"
     };
 
     @Autowired
@@ -29,27 +28,22 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(
-                        request ->
-                                request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT).permitAll()
-                                        // Authorize by END POINT
-                                        //.requestMatchers(HttpMethod.GET, "/users").hasRole(Role.ADMIN.name())
-                                .anyRequest().authenticated()
-                );
-
+        httpSecurity.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(request -> request.requestMatchers(
+                        HttpMethod.POST, PUBLIC_ENDPOINT)
+                .permitAll()
+                // Authorize by END POINT
+                // .requestMatchers(HttpMethod.GET, "/users").hasRole(Role.ADMIN.name())
+                .anyRequest()
+                .authenticated());
 
         httpSecurity.oauth2ResourceServer(oauth2 -> {
-            oauth2.jwt(jwtConfigurer ->
-                    jwtConfigurer
+            oauth2.jwt(jwtConfigurer -> jwtConfigurer
                             // Register an Authentication Provider.
                             // Using jwtDecoder in Authentication Provider.
                             .decoder(customJwtDecoder)
-                            // jwtAuthenticationConverter is to convert the SCOPE_ADMIN (this is OAuth2 by default) to ROLE_ADMIN
-                            .jwtAuthenticationConverter(jwtAuthenticationConverter())
-
-            )       // Dealing with 401 error code.
+                            // jwtAuthenticationConverter is to convert the SCOPE_ADMIN (this is OAuth2 by default) to
+                            // ROLE_ADMIN
+                            .jwtAuthenticationConverter(jwtAuthenticationConverter())) // Dealing with 401 error code.
                     .authenticationEntryPoint(new JwtAuthenticationEntryPoint());
         });
 
