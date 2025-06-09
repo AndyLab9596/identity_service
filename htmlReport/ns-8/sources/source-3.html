@@ -1,0 +1,206 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > GlobalExceptionHandler</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.devteria.identityservice.exception</a>
+</div>
+
+<h1>Coverage Summary for Class: GlobalExceptionHandler (com.devteria.identityservice.exception)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GlobalExceptionHandler</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    57.1%
+  </span>
+  <span class="absValue">
+    (4/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    46.2%
+  </span>
+  <span class="absValue">
+    (18/39)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.devteria.identityservice.exception;
+&nbsp;
+&nbsp;import com.devteria.identityservice.dto.request.ApiResponse;
+&nbsp;import jakarta.validation.ConstraintViolation;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.security.access.AccessDeniedException;
+&nbsp;import org.springframework.web.bind.MethodArgumentNotValidException;
+&nbsp;import org.springframework.web.bind.annotation.ControllerAdvice;
+&nbsp;import org.springframework.web.bind.annotation.ExceptionHandler;
+&nbsp;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Objects;
+&nbsp;
+&nbsp;@ControllerAdvice
+<b class="fc">&nbsp;@Slf4j</b>
+<b class="fc">&nbsp;public class GlobalExceptionHandler {</b>
+&nbsp;    private static final  String MIN_ATTRIBUTE = &quot;min&quot;;
+&nbsp;
+&nbsp;    @ExceptionHandler(value = Exception.class)
+&nbsp;    ResponseEntity&lt;ApiResponse&gt; handlingRuntimeException(RuntimeException exception){
+<b class="nc">&nbsp;        ApiResponse apiResponse = new ApiResponse();</b>
+&nbsp;
+<b class="nc">&nbsp;        apiResponse.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());</b>
+<b class="nc">&nbsp;        apiResponse.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());</b>
+&nbsp;
+<b class="nc">&nbsp;        return ResponseEntity.badRequest().body(apiResponse);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ExceptionHandler(value = AppException.class)
+&nbsp;    ResponseEntity&lt;ApiResponse&gt; handlingAppException(AppException exception){
+<b class="nc">&nbsp;        ErrorCode errorCode = exception.getErrorCode();</b>
+<b class="nc">&nbsp;        ApiResponse apiResponse = new ApiResponse();</b>
+&nbsp;
+<b class="nc">&nbsp;        apiResponse.setCode(errorCode.getCode());</b>
+<b class="nc">&nbsp;        apiResponse.setMessage(errorCode.getMessage());</b>
+&nbsp;
+<b class="nc">&nbsp;        return ResponseEntity</b>
+<b class="nc">&nbsp;                .status(errorCode.getStatusCode())</b>
+<b class="nc">&nbsp;                .body(apiResponse);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+&nbsp;    ResponseEntity&lt;ApiResponse&gt; handlingValidation(MethodArgumentNotValidException exception){
+<b class="fc">&nbsp;        String enumKey = exception.getFieldError().getDefaultMessage();</b>
+&nbsp;
+<b class="fc">&nbsp;        ErrorCode errorCode = ErrorCode.INVALID_KEY;</b>
+<b class="fc">&nbsp;        Map&lt;String, Object&gt; attributes = null;</b>
+&nbsp;
+&nbsp;        try {
+<b class="fc">&nbsp;            errorCode = ErrorCode.valueOf(enumKey);</b>
+<b class="fc">&nbsp;            var constraintViolation  = exception.getBindingResult()</b>
+<b class="fc">&nbsp;                    .getAllErrors().getFirst().unwrap(ConstraintViolation.class);</b>
+&nbsp;
+<b class="fc">&nbsp;            attributes = constraintViolation.getConstraintDescriptor().getAttributes();</b>
+<b class="fc">&nbsp;            log.info(attributes.toString());</b>
+&nbsp;
+<b class="nc">&nbsp;        } catch (IllegalArgumentException e){</b>
+&nbsp;
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        ApiResponse apiResponse = new ApiResponse();</b>
+&nbsp;
+<b class="fc">&nbsp;        apiResponse.setCode(errorCode.getCode());</b>
+<b class="fc">&nbsp;        apiResponse.setMessage(</b>
+<b class="pc">&nbsp;                Objects.nonNull(attributes) ?</b>
+<b class="fc">&nbsp;                mapAttribute(errorCode.getMessage(), attributes) :</b>
+<b class="nc">&nbsp;                errorCode.getMessage());</b>
+&nbsp;
+<b class="fc">&nbsp;        return ResponseEntity.badRequest().body(apiResponse);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @ExceptionHandler(value = AccessDeniedException.class)
+&nbsp;    ResponseEntity&lt;ApiResponse&gt; handlingAccessDeniedException(AccessDeniedException exception){
+<b class="nc">&nbsp;        ErrorCode errorCode = ErrorCode.UNAUTHORIZED;</b>
+<b class="nc">&nbsp;        return ResponseEntity</b>
+<b class="nc">&nbsp;                .status(errorCode.getStatusCode())</b>
+<b class="nc">&nbsp;                .body(</b>
+<b class="nc">&nbsp;                        ApiResponse.builder()</b>
+<b class="nc">&nbsp;                                .code(errorCode.getCode())</b>
+<b class="nc">&nbsp;                                .message(errorCode.getMessage())</b>
+<b class="nc">&nbsp;                                .build()</b>
+&nbsp;                );
+&nbsp;    }
+&nbsp;
+&nbsp;    private String mapAttribute(String message, Map&lt;String, Object&gt; attributes) {
+<b class="fc">&nbsp;        String minValue = String.valueOf(attributes.get(MIN_ATTRIBUTE));</b>
+<b class="fc">&nbsp;        return message.replace(&quot;{&quot; + MIN_ATTRIBUTE + &quot;}&quot;, minValue);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-06-08 16:11</div>
+</div>
+</body>
+</html>

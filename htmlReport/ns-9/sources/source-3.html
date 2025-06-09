@@ -1,0 +1,238 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserMapperImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.devteria.identityservice.mapper</a>
+</div>
+
+<h1>Coverage Summary for Class: UserMapperImpl (com.devteria.identityservice.mapper)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserMapperImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (4/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    16.7%
+  </span>
+  <span class="absValue">
+    (3/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (20/50)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.devteria.identityservice.mapper;
+&nbsp;
+&nbsp;import com.devteria.identityservice.dto.request.UserCreationRequest;
+&nbsp;import com.devteria.identityservice.dto.request.UserUpdateRequest;
+&nbsp;import com.devteria.identityservice.dto.response.PermissionResponse;
+&nbsp;import com.devteria.identityservice.dto.response.RoleResponse;
+&nbsp;import com.devteria.identityservice.dto.response.UserResponse;
+&nbsp;import com.devteria.identityservice.entity.Permission;
+&nbsp;import com.devteria.identityservice.entity.Role;
+&nbsp;import com.devteria.identityservice.entity.User;
+&nbsp;import java.util.LinkedHashSet;
+&nbsp;import java.util.Set;
+&nbsp;import javax.annotation.processing.Generated;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;
+&nbsp;@Generated(
+&nbsp;    value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
+&nbsp;    comments = &quot;version: 1.5.5.Final, compiler: javac, environment: Java 21.0.7 (Microsoft)&quot;
+&nbsp;)
+&nbsp;@Component
+<b class="fc">&nbsp;public class UserMapperImpl implements UserMapper {</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public User toUser(UserCreationRequest request) {
+<b class="pc">&nbsp;        if ( request == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        User.UserBuilder user = User.builder();</b>
+&nbsp;
+<b class="fc">&nbsp;        user.username( request.getUsername() );</b>
+<b class="fc">&nbsp;        user.password( request.getPassword() );</b>
+<b class="fc">&nbsp;        user.firstName( request.getFirstName() );</b>
+<b class="fc">&nbsp;        user.lastName( request.getLastName() );</b>
+<b class="fc">&nbsp;        user.dob( request.getDob() );</b>
+&nbsp;
+<b class="fc">&nbsp;        return user.build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public UserResponse toUserResponse(User user) {
+<b class="pc">&nbsp;        if ( user == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        UserResponse.UserResponseBuilder userResponse = UserResponse.builder();</b>
+&nbsp;
+<b class="fc">&nbsp;        userResponse.id( user.getId() );</b>
+<b class="fc">&nbsp;        userResponse.username( user.getUsername() );</b>
+<b class="fc">&nbsp;        userResponse.firstName( user.getFirstName() );</b>
+<b class="fc">&nbsp;        userResponse.lastName( user.getLastName() );</b>
+<b class="fc">&nbsp;        userResponse.dob( user.getDob() );</b>
+<b class="fc">&nbsp;        userResponse.roles( roleSetToRoleResponseSet( user.getRoles() ) );</b>
+&nbsp;
+<b class="fc">&nbsp;        return userResponse.build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void updateUser(User user, UserUpdateRequest request) {
+<b class="nc">&nbsp;        if ( request == null ) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        user.setPassword( request.getPassword() );</b>
+<b class="nc">&nbsp;        user.setFirstName( request.getFirstName() );</b>
+<b class="nc">&nbsp;        user.setLastName( request.getLastName() );</b>
+<b class="nc">&nbsp;        user.setDob( request.getDob() );</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected PermissionResponse permissionToPermissionResponse(Permission permission) {
+<b class="nc">&nbsp;        if ( permission == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        PermissionResponse.PermissionResponseBuilder permissionResponse = PermissionResponse.builder();</b>
+&nbsp;
+<b class="nc">&nbsp;        permissionResponse.name( permission.getName() );</b>
+<b class="nc">&nbsp;        permissionResponse.description( permission.getDescription() );</b>
+&nbsp;
+<b class="nc">&nbsp;        return permissionResponse.build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected Set&lt;PermissionResponse&gt; permissionSetToPermissionResponseSet(Set&lt;Permission&gt; set) {
+<b class="nc">&nbsp;        if ( set == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Set&lt;PermissionResponse&gt; set1 = new LinkedHashSet&lt;PermissionResponse&gt;( Math.max( (int) ( set.size() / .75f ) + 1, 16 ) );</b>
+<b class="nc">&nbsp;        for ( Permission permission : set ) {</b>
+<b class="nc">&nbsp;            set1.add( permissionToPermissionResponse( permission ) );</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return set1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected RoleResponse roleToRoleResponse(Role role) {
+<b class="nc">&nbsp;        if ( role == null ) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        RoleResponse.RoleResponseBuilder roleResponse = RoleResponse.builder();</b>
+&nbsp;
+<b class="nc">&nbsp;        roleResponse.name( role.getName() );</b>
+<b class="nc">&nbsp;        roleResponse.description( role.getDescription() );</b>
+<b class="nc">&nbsp;        roleResponse.permissions( permissionSetToPermissionResponseSet( role.getPermissions() ) );</b>
+&nbsp;
+<b class="nc">&nbsp;        return roleResponse.build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    protected Set&lt;RoleResponse&gt; roleSetToRoleResponseSet(Set&lt;Role&gt; set) {
+<b class="pc">&nbsp;        if ( set == null ) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Set&lt;RoleResponse&gt; set1 = new LinkedHashSet&lt;RoleResponse&gt;( Math.max( (int) ( set.size() / .75f ) + 1, 16 ) );</b>
+<b class="nc">&nbsp;        for ( Role role : set ) {</b>
+<b class="nc">&nbsp;            set1.add( roleToRoleResponse( role ) );</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return set1;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-06-08 16:11</div>
+</div>
+</body>
+</html>

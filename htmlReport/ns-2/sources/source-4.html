@@ -1,0 +1,193 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SecurityConfig</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.devteria.identityservice.configuration</a>
+</div>
+
+<h1>Coverage Summary for Class: SecurityConfig (com.devteria.identityservice.configuration)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SecurityConfig</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (20/20)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">SecurityConfig$$SpringCGLIB$$0</td>
+  </tr>
+  <tr>
+    <td class="name">SecurityConfig$$SpringCGLIB$$FastClass$$0</td>
+  </tr>
+  <tr>
+    <td class="name">SecurityConfig$$SpringCGLIB$$FastClass$$1</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (20/20)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.devteria.identityservice.configuration;
+&nbsp;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.context.annotation.Bean;
+&nbsp;import org.springframework.context.annotation.Configuration;
+&nbsp;import org.springframework.http.HttpMethod;
+&nbsp;import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+&nbsp;import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+&nbsp;import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+&nbsp;import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+&nbsp;import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+&nbsp;import org.springframework.security.crypto.password.PasswordEncoder;
+&nbsp;import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+&nbsp;import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+&nbsp;import org.springframework.security.web.SecurityFilterChain;
+&nbsp;
+&nbsp;@Configuration
+&nbsp;@EnableWebSecurity
+&nbsp;@EnableMethodSecurity
+<b class="fc">&nbsp;public class SecurityConfig {</b>
+&nbsp;
+<b class="fc">&nbsp;    private final String[] PUBLIC_ENDPOINT = {</b>
+&nbsp;            &quot;/users&quot;,
+&nbsp;            &quot;/auth/token&quot;, &quot;/auth/introspect&quot;, &quot;/auth/logout&quot;, &quot;auth/refresh&quot;
+&nbsp;    };
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private CustomJwtDecoder customJwtDecoder;
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+<b class="fc">&nbsp;        httpSecurity</b>
+<b class="fc">&nbsp;                .csrf(AbstractHttpConfigurer::disable)</b>
+<b class="fc">&nbsp;                .authorizeHttpRequests(</b>
+&nbsp;                        request -&gt;
+<b class="fc">&nbsp;                                request.requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT).permitAll()</b>
+&nbsp;                                        // Authorize by END POINT
+&nbsp;                                        //.requestMatchers(HttpMethod.GET, &quot;/users&quot;).hasRole(Role.ADMIN.name())
+<b class="fc">&nbsp;                                .anyRequest().authenticated()</b>
+&nbsp;                );
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        httpSecurity.oauth2ResourceServer(oauth2 -&gt; {</b>
+<b class="fc">&nbsp;            oauth2.jwt(jwtConfigurer -&gt;</b>
+<b class="fc">&nbsp;                    jwtConfigurer</b>
+&nbsp;                            // Register an Authentication Provider.
+&nbsp;                            // Using jwtDecoder in Authentication Provider.
+<b class="fc">&nbsp;                            .decoder(customJwtDecoder)</b>
+&nbsp;                            // jwtAuthenticationConverter is to convert the SCOPE_ADMIN (this is OAuth2 by default) to ROLE_ADMIN
+<b class="fc">&nbsp;                            .jwtAuthenticationConverter(jwtAuthenticationConverter())</b>
+&nbsp;
+&nbsp;            )       // Dealing with 401 error code.
+<b class="fc">&nbsp;                    .authenticationEntryPoint(new JwtAuthenticationEntryPoint());</b>
+&nbsp;        });
+&nbsp;
+<b class="fc">&nbsp;        return httpSecurity.build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    JwtAuthenticationConverter jwtAuthenticationConverter() {
+<b class="fc">&nbsp;        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();</b>
+<b class="fc">&nbsp;        jwtGrantedAuthoritiesConverter.setAuthorityPrefix(&quot;&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();</b>
+<b class="fc">&nbsp;        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);</b>
+<b class="fc">&nbsp;        return jwtAuthenticationConverter;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    PasswordEncoder passwordEncoder() {
+<b class="fc">&nbsp;        return new BCryptPasswordEncoder(10);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-06-08 16:11</div>
+</div>
+</body>
+</html>

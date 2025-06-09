@@ -1,0 +1,133 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ErrorCode</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.devteria.identityservice.exception</a>
+</div>
+
+<h1>Coverage Summary for Class: ErrorCode (com.devteria.identityservice.exception)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ErrorCode</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (5/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94.1%
+  </span>
+  <span class="absValue">
+    (16/17)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.devteria.identityservice.exception;
+&nbsp;
+&nbsp;import lombok.Getter;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.HttpStatusCode;
+&nbsp;
+<b class="fc">&nbsp;@Getter</b>
+&nbsp;public enum ErrorCode {
+<b class="fc">&nbsp;    UNCATEGORIZED_EXCEPTION(9999, &quot;Uncategorized error&quot;, HttpStatus.INTERNAL_SERVER_ERROR),</b>
+<b class="fc">&nbsp;    INVALID_KEY(1001, &quot;Uncategorized error&quot;, HttpStatus.BAD_REQUEST),</b>
+<b class="fc">&nbsp;    USER_EXISTED(1002, &quot;User existed&quot;, HttpStatus.BAD_REQUEST),</b>
+<b class="fc">&nbsp;    USERNAME_INVALID(1003, &quot;Username must be at least {min} characters&quot;, HttpStatus.BAD_REQUEST),</b>
+<b class="fc">&nbsp;    INVALID_PASSWORD(1004, &quot;Password must be at least {min} characters&quot;, HttpStatus.BAD_REQUEST),</b>
+<b class="fc">&nbsp;    USER_NOT_EXISTED(1005, &quot;User not existed&quot;, HttpStatus.NOT_FOUND),</b>
+<b class="fc">&nbsp;    UNAUTHENTICATED(1006, &quot;Unauthenticated&quot;, HttpStatus.UNAUTHORIZED),</b>
+<b class="fc">&nbsp;    UNAUTHORIZED(1007, &quot;You do not have permission&quot;, HttpStatus.FORBIDDEN),</b>
+<b class="fc">&nbsp;    INVALID_DOB(1008, &quot;Your age must be at least {min}&quot;, HttpStatus.BAD_REQUEST)</b>
+&nbsp;    ;
+&nbsp;
+<b class="fc">&nbsp;    ErrorCode(int code, String message, HttpStatusCode statusCode) {</b>
+<b class="fc">&nbsp;        this.code = code;</b>
+<b class="fc">&nbsp;        this.message = message;</b>
+<b class="fc">&nbsp;        this.statusCode = statusCode;</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    private int code;</b>
+<b class="fc">&nbsp;    private String message;</b>
+<b class="nc">&nbsp;    private HttpStatusCode statusCode;</b>
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-06-08 16:11</div>
+</div>
+</body>
+</html>
